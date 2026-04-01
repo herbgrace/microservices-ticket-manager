@@ -31,7 +31,7 @@ public class TicketRestController {
     @GetMapping(path = "/search/{searchText}")
     @ResponseStatus(code = HttpStatus.OK)
     public List<Ticket> searchItems(@PathVariable(required = true) String searchText) {
-        return ticketRepository.findByEventContainingOrDescriptionContaining(searchText, searchText);
+        return ticketRepository.findByEventContainingOrDescriptionContainingIgnoreCase(searchText, searchText);
     }
 
     @PostMapping(path="")
@@ -42,7 +42,7 @@ public class TicketRestController {
     }
 
     @PutMapping(path = "/{ticketGuid}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public Ticket updateTicket(@PathVariable(required = true) UUID ticketGuid, @RequestBody Ticket ticket) {
         Ticket existing = ticketRepository.findById(ticketGuid).orElseThrow(() -> new NoSuchElementException("Ticket not found"));
         ticket.setId(ticketGuid);

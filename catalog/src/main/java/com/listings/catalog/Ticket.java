@@ -2,10 +2,12 @@ package com.listings.catalog;
 
 import java.time.LocalDate;
 import java.util.UUID;
-// import org.springframework.data.annotation.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "tickets")
 public class Ticket{
-    // @Id
+    @Id
     private UUID id;
     private String event;
     private double price;

@@ -1,7 +1,22 @@
 FROM maven:4.0.0-rc-5-eclipse-temurin-21 AS build
 WORKDIR /app
-# COPY . /app
 COPY pom.xml ./
 COPY /src ./src
 
 RUN mvn clean package -DskipTests
+
+# Cantera's Dockerfile
+# Doesn't work for me but I already made one that works for me...
+# So I'm not going to touch it
+
+# FROM maven:3.9-sapmachine-21 AS build
+# COPY src /home/app/src
+# COPY pom.xml /home/app
+# RUN mvn -f /home/app/pom.xml clean package
+
+# #FROM tomcat:8-jdk8-openjdk
+# FROM tomcat:11.0.0-jdk21
+# COPY --from=build /home/app/target/TicketManagerCatalogAPI.war /usr/local/tomcat/webapps/ROOT.war
+
+# ENV EUREKA_HOST=SEN300EurekaRegistry
+# ADD ./target/BookServiceAPI.war /usr/local/tomcat/webapps/ROOT.war

@@ -11,14 +11,15 @@ services:
       - catalogMongoDB
     networks:
       - ticket-manager-network
+
   catalogMongoDB:
     image: mongo:latest
     container_name: CatalogMongoDB
     ports:
       - 27017:27017
-    # volumes:
-      # - /data:/data/db
-      # - ./MongoDB/init.js:/docker-entrypoint-initdb.d/init.js:ro
+    volumes:
+      - ./MongoDB/init.js:/docker-entrypoint-initdb.d/init.js:ro
+      - ./MongoDB/data:/docker-entrypoint-initdb.d/seed-data:ro
     networks:
       - ticket-manager-network
 

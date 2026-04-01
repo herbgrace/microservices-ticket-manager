@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface TicketRepository extends MongoRepository<Ticket, UUID> {
 
-    public List<Ticket> findByEventContainingOrDescriptionContaining(String txt, String txt2); 
+    public List<Ticket> findByEventContainingOrDescriptionContainingIgnoreCase(String txt, String txt2); 
 
     List<Ticket> findByEventContainingIgnoreCase(String event);
 
