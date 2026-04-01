@@ -1,0 +1,27 @@
+services:
+  catalog:
+    build:
+      context: ./catalog
+    container_name: CatalogAPI
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://catalogDB:27017/ticketmanager
+    depends_on:
+      - catalogDB
+    networks:
+      - ticket-manager-network
+  catalogDB:
+    image: mongo:latest
+    container_name: CatalogMongoDB
+    ports:
+      - 27017:27017
+    volumes:
+      # - catalog-db-data:/data/db
+      - ./MongoDB/init.js:/docker-entrypoint-initdb.d/init.js:ro
+    networks:
+      - ticket-manager-network
+
+networks:
+  ticket-manager-network:
+    driver: bridge
