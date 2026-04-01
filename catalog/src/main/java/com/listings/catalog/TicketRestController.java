@@ -7,9 +7,6 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
 
 
 @RestController
@@ -31,6 +28,12 @@ public class TicketRestController {
         return ticketRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Ticket not found"));
     }
 
+    @GetMapping(path = "/search/{searchText}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<Ticket> searchItems(@PathVariable(required = true) String searchText) {
+        return ticketRepository.findByEventContainingOrDescriptionContaining(searchText, searchText);
+    }
+
     @PostMapping(path="")
     @ResponseStatus(code=HttpStatus.CREATED)
     public Ticket createTicket(@RequestBody Ticket ticket) {
@@ -38,11 +41,13 @@ public class TicketRestController {
         return ticketRepository.save(ticket);
     }
 
-    @PutMapping("/{id}")
-    public Ticket updateTicketbyId(@PathVariable String id, @RequestBody Ticket entity) {
-        Ticket ticket = ticketRepository.findById(UUID.fromString(id)).orElseThrow(() -> new NoSuchElementException("Ticket not found"));
-        ticket = entity;
-        return ticketRepository.save(ticket);
+    @PutMapping(path = "/{ticketGuid}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Ticket updateTicket(@PathVariable(required = true) UUID ticketGuid, @RequestBody Ticket ticket) {
+        Ticket existing = ticketRepository.findById(ticketGuid).orElseThrow(() -> new NoSuchElementException("Ticket not found"));
+        ticket.setId(ticketGuid);
+        existing = ticket;
+        return ticketRepository.save(existing);
     }
 
     @DeleteMapping(path="/{id}")

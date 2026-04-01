@@ -1,1 +1,7 @@
-FROM baseImage
+FROM maven:4.0.0-rc-5-eclipse-temurin-21 AS build
+WORKDIR /app
+# COPY . /app
+COPY pom.xml ./
+COPY /src ./src
+
+RUN mvn clean package -DskipTests

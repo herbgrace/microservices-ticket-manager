@@ -5,6 +5,7 @@ import java.util.UUID;
 // import org.springframework.data.annotation.*;
 
 public class Ticket{
+    // @Id
     private UUID id;
     private String event;
     private double price;
