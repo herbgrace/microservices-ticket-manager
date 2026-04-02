@@ -22,6 +22,25 @@ services:
       - ./MongoDB/data:/docker-entrypoint-initdb.d/seed-data:ro
     networks:
       - ticket-manager-network
+  
+  basket:
+    build:
+      context: ./basket
+    container_name: BasketServiceAPI
+    ports:
+      - "8082:8082"
+    depends_on:
+      - basketRedisDB
+    networks:
+      - ticket-manager-network
+
+  basketRedisDB:
+    image: redis:latest
+    container_name: BasketRedisDB
+    ports:
+      - 6379:6379
+    networks:
+      - ticket-manager-network
 
 networks:
   ticket-manager-network:

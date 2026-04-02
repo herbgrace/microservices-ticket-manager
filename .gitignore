@@ -34,3 +34,7 @@ build/
 
 
 /MongoDB/data/
+
+/Basket/__pycache__
+/Basket/.venv
+/Basket/.env
