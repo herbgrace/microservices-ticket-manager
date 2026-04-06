@@ -38,3 +38,8 @@ build/
 /Basket/__pycache__
 /Basket/.venv
 /Basket/.env
+
+/OtherAssignments/
+
+/UserService/obj
+/UserService/bin

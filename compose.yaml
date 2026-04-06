@@ -42,6 +42,35 @@ services:
     networks:
       - ticket-manager-network
 
+  user:
+    build:
+      context: ./UserService
+    container_name: UserServiceAPI
+    ports: 
+      - "8085:8085"
+    depends_on:
+      - userSQLDB
+    networks:
+      - ticket-manager-network
+    # restart: "on-failure"
+
+  userSQLDB:
+    image: mysql:latest
+    container_name: UserSQLDB
+    ports:
+      - 1434:1434
+    environment:
+      - MYSQL_ROOT_PASSWORD=dev123
+      - MYSQL_DATABASE=UserServiceDB
+    volumes:
+      - userservicevolume:/var/opt/mssql
+      - ./SQL/DBSetup.sql:/docker-entrypoint-initdb.d/DBSetup.sql:ro
+    networks:
+      - ticket-manager-network
+
 networks:
   ticket-manager-network:
     driver: bridge
+
+volumes:
+  userservicevolume:
