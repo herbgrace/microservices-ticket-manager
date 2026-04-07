@@ -55,13 +55,14 @@ services:
     # restart: "on-failure"
 
   userSQLDB:
-    image: mysql:latest
+    image: mcr.microsoft.com/mssql/server:2019-latest
     container_name: UserSQLDB
     ports:
-      - 1434:1434
+      - 1434:1433
     environment:
-      - MYSQL_ROOT_PASSWORD=dev123
-      - MYSQL_DATABASE=UserServiceDB
+      - SA_PASSWORD=dev123!!
+      - MSSQL_DATABASE=UserServiceDB
+      - ACCEPT_EULA=Y
     volumes:
       - userservicevolume:/var/opt/mssql
       - ./SQL/DBSetup.sql:/docker-entrypoint-initdb.d/DBSetup.sql:ro
