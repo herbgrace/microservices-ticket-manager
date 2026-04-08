@@ -43,3 +43,6 @@ build/
 
 /UserService/obj
 /UserService/bin
+
+/ServiceTests/__pycache__
+/ServiceTests/.pytest_cache

@@ -67,7 +67,7 @@ public class UsersController(
             await db.SaveChangesAsync();
 
             logger.LogInformation("User created with GUID {UserGuid}.", user.UserGuid);
-            return Ok(new { Success = true, Message = "User created.", UserGuid = user.UserGuid });
+            return Created("http://localhost:8050/api/users", new { Success = true, Message = "User created.", UserGuid = user.UserGuid });
         }
         catch (Exception ex)
         {
@@ -118,6 +118,7 @@ public class UsersController(
             var existingUsername = user.Username;
             mapper.Map(userDTO, user);
             user.Username ??= existingUsername;
+            user.PasswordHash = HashPassword(user.Password);
             await db.SaveChangesAsync();
 
             logger.LogInformation("User {UserGuid} updated.", userGuid);
