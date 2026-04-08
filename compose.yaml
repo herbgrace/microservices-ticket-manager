@@ -69,9 +69,22 @@ services:
     networks:
       - ticket-manager-network
 
+  rabbitMQ:
+    image: rabbitmq:3-management
+    container_name: RabbitMQ
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=dev123
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
 networks:
   ticket-manager-network:
     driver: bridge
 
 volumes:
   userservicevolume:
+  rabbitmq_data:

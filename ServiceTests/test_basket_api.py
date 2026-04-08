@@ -17,7 +17,7 @@ def test_basket_adds_new_item():
     res = requests.post(base_URI, json=obj)
     assert res.status_code == 201
 
-def test_basket_handles_bad_data():
+def test_basket_add_item_handles_bad_data():
     obj = {
         "id": "not_a_GUID",
         "event": "fake",
@@ -46,9 +46,25 @@ def test_basket_updates_items():
     res = requests.put(f"{base_URI}/{added_GUIDS[0]}", json=new_obj)
     assert res.status_code == 200
 
+def test_basket_update_item_handles_bad_data():
+    new_obj = {
+        "id": "wrong",
+        "event": "UPDATED Spring Fest Concert",
+        "price": 2009.99,
+        "description": "Outdoor live concert featuring BAD local bands.",
+        "event_date": "2026-05-15"
+    }
+
+    res = requests.put(f"{base_URI}/{added_GUIDS[0]}", json=new_obj)
+    assert res.status_code == 422
+
 def test_basket_deletes_items():
     res = requests.delete(f"{base_URI}/{added_GUIDS[0]}")
     assert res.status_code == 200
+
+def test_basket_delete_item_handles_bad_data():
+    res = requests.delete(f"{base_URI}/notReal")
+    assert res.status_code == 422
 
 def test_basket_clears_items():
     res = requests.delete(f"{base_URI}")
