@@ -17,6 +17,16 @@ def test_catalog_adds_new_item():
 
     assert res.status_code == 201
 
+def test_catalog_handles_bad_data():
+    obj = {
+        "event":"A7X Concert",
+        "description":"Metal Concert full of Avenged Sevenfold's best hits.",
+        "eventDate":"2026-08-25"
+    }
+
+    res = requests.post(base_URI, json=obj)
+    assert res.status_code == 400
+
 def test_catalog_gets_all_catalog_items():
     res = requests.get(base_URI)
 
@@ -54,3 +64,4 @@ def test_catalog_deletes_items():
         res = requests.delete(f"{base_URI}/{item}")
 
         assert res.status_code == 204
+    added_GUIDS.clear()

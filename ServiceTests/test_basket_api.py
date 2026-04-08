@@ -17,6 +17,18 @@ def test_basket_adds_new_item():
     res = requests.post(base_URI, json=obj)
     assert res.status_code == 201
 
+def test_basket_handles_bad_data():
+    obj = {
+        "id": "not_a_GUID",
+        "event": "fake",
+        "price": -200,
+        "description": "Party in the void between time",
+        "event_date": "always but never"
+    }
+
+    res = requests.post(base_URI, json=obj)
+    assert res.status_code == 422
+
 def test_basket_gets_all_items():
     res = requests.get(f"{base_URI}")
 
@@ -33,7 +45,6 @@ def test_basket_updates_items():
 
     res = requests.put(f"{base_URI}/{added_GUIDS[0]}", json=new_obj)
     assert res.status_code == 200
-
 
 def test_basket_deletes_items():
     res = requests.delete(f"{base_URI}/{added_GUIDS[0]}")

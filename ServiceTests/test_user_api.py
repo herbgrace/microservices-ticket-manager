@@ -16,6 +16,15 @@ def test_api_adds_new_user():
 
     assert res.status_code == 201
 
+def test_api_handles_bad_data():
+    obj = {
+        "username": "another user",
+        "password": "secure"
+    }
+
+    res = requests.post(base_URI, json=obj)
+    assert res.status_code == 400
+
 def test_api_can_login_user():
     obj = {
         "email": "fakeEmail@gmail.com",
@@ -46,7 +55,7 @@ def test_api_can_update_user():
     assert res.status_code == 200
 
 def test_api_can_delete_user():
-    for i in range(len(created_GUIDS)):
-        res = requests.delete(f"{base_URI}/{created_GUIDS[i]}")
+    for item in created_GUIDS:
+        res = requests.delete(f"{base_URI}/{item}")
         assert res.status_code == 200
     created_GUIDS.clear()
