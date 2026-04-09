@@ -68,6 +68,17 @@ services:
       - ./SQL/DBSetup.sql:/docker-entrypoint-initdb.d/DBSetup.sql:ro
     networks:
       - ticket-manager-network
+  
+  auth:
+    build:
+      context: ./AuthService
+    container_name: AuthServiceAPI
+    ports: 
+      - "8084:8080"
+    depends_on:
+      - user
+    networks:
+      - ticket-manager-network
 
   rabbitMQ:
     image: rabbitmq:3-management

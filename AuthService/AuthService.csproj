@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.4" />
+
+    <!-- Swashbuckle removed: incompatible with .NET 10 -->
+    <!-- UI is now served by Scalar at /scalar/v1 -->
+    <PackageReference Include="Scalar.AspNetCore" Version="2.6.0" />
+
+    <!-- No database — AuthService calls UserService HTTP API to verify credentials -->
+    <!-- EF Core removed -->
+
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.4" />
+
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.4" />
+
+    <!--
+      EUREKA / STEELTOE NOTE:
+      Steeltoe 3.x officially targets .NET 6/7/8. May still compile on .NET 10 via .NET Standard
+      compatibility, but is not officially supported. Upgrade to Steeltoe 4.x if needed: https://docs.steeltoe.io
+    -->
+    <PackageReference Include="Steeltoe.Discovery.ClientCore" Version="3.2.8" />
+    <PackageReference Include="Steeltoe.Discovery.Eureka" Version="3.2.8" />
+  </ItemGroup>
+
+</Project>

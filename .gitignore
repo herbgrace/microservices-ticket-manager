@@ -46,3 +46,6 @@ build/
 
 /ServiceTests/__pycache__
 /ServiceTests/.pytest_cache
+
+/AuthService/bin
+/AuthService/obj
