@@ -19,7 +19,7 @@ public class AuthController(
 
     // Accepts email + password, calls UserService to verify credentials,
     // and returns a signed JWT on success.
-    [HttpPost("createtoken/method1")]
+    [HttpPost("createtoken/")]
     public async Task<IActionResult> CreateTokenMethod1([FromBody] UserDTO userDto)
     {
         var userServiceUrl = config["UserServiceUrl"]
