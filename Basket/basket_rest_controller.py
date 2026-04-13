@@ -1,5 +1,6 @@
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status #, Depends, status, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
+# from fastapi.security import OAuth2PasswordBearer
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 from uuid import UUID, uuid4
@@ -9,6 +10,7 @@ import json
 import requests
 #import py_eureka_client.eureka_client as eureka_client
 from ticket import Ticket
+# from jose import JWTError, jwt
 
 load_dotenv()
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
@@ -29,6 +31,30 @@ redis_client = redis.Redis(
 )
 
 eureka_client = None
+
+# oauth_scheme = OAuth2PasswordBearer(tokenUrl="token")
+# SECRET_KEY = os.getenv("JWT_KEY", "fakeKey")
+# ALGORITHM = "HS256"
+
+# async def get_current_user(token: str = Depends(oauth_scheme)):
+#     credentials_exception = HTTPException(
+#         status_code=status.HTTP_401_UNAUTHORIZED,
+#         detail="Could not validate credentials",
+#         headers={"WWW-Authenticate": "Bearer"},
+#     )
+#     try:
+#         print(SECRET_KEY, token)
+#         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+
+#         print(payload)
+#         username: str = payload.get("claims.Name")
+#         if username is None:
+#             raise credentials_exception
+#         return username
+#     except JWTError:
+#         raise credentials_exception
+
+# router = APIRouter(dependencies=[Depends(get_current_user)])
 
 def get_user_basket_key(user_id: str) -> str:
     return f"basket:{user_id}"
