@@ -28,33 +28,12 @@ public class OrdersController(
         return Ok("Hello from OrderController - running .NET 10!");
     }
 
-    [HttpGet("get-my-ip")]
-    public IActionResult GetMyIp()
-    {
-        string hostName = Dns.GetHostName();
-        string ip = Dns.GetHostEntry(hostName).AddressList.FirstOrDefault()?.ToString() ?? "Unavailable";
-
-        return Ok(new
-        {
-            LocalTime = DateTime.Now,
-            UtcTime = DateTime.UtcNow,
-            HostName = hostName,
-            IP = ip,
-            Environment = new
-            {
-                MY_ENV_VARIABLE01 = Environment.GetEnvironmentVariable("MY_ENV_VARIABLE01"),
-                MY_ENV_VARIABLE02 = Environment.GetEnvironmentVariable("MY_ENV_VARIABLE02"),
-                ASPNETCORE_ENVIRONMENT = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
-            }
-        });
-    }
-
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
         try
         {
-            var orders = await db.Orders.ToListAsync();
+            var orders = await db.Orders.Include(o => o.Tickets).ToListAsync();
             return Ok(new { Success = true, Message = "Orders retrieved.", Orders = orders });
         }
         catch (Exception ex)
@@ -179,7 +158,7 @@ public class OrdersController(
         }
     }
 
-        
+    [Authorize]
     [HttpDelete("{orderGuid:guid}")]
     public async Task<IActionResult> Delete(Guid orderGuid)
     {
