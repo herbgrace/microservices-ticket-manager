@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.4" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
+
+    <!-- Swashbuckle removed: incompatible with .NET 10 (interface change in Microsoft.AspNetCore.OpenApi 10.x) -->
+    <!-- UI is now served by Scalar at /scalar/v1 -->
+    <PackageReference Include="Scalar.AspNetCore" Version="2.6.0" />
+
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.4" />
+
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
+
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.4" />
+
+    <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
+
+    <!--
+      EUREKA / STEELTOE NOTE:
+      Steeltoe 3.x (used here) officially targets .NET 6/7/8. These packages may still
+      compile on .NET 10 via .NET Standard compatibility, but are not officially supported.
+      If you re-enable Eureka discovery (see Program.cs), verify they compile and consider
+      upgrading to Steeltoe 4.x, which officially supports .NET 8+:
+        https://docs.steeltoe.io
+      Steeltoe 4.x package names changed slightly — check the migration guide before upgrading.
+    -->
+    <PackageReference Include="Steeltoe.Discovery.ClientCore" Version="3.2.8" />
+    <PackageReference Include="Steeltoe.Discovery.Eureka" Version="3.2.8" />
+  </ItemGroup>
+
+</Project>

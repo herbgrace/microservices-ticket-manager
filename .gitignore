@@ -49,3 +49,6 @@ build/
 
 /AuthService/bin
 /AuthService/obj
+
+/OrderService/bin
+/OrderService/obj

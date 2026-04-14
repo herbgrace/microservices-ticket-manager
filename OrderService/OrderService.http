@@ -1,0 +1,16 @@
+@OrderService_HostAddress = http://localhost:8083
+
+GET {{OrderService_HostAddress}}/api/orders
+Accept: application/json
+
+###
+
+GET {{OrderService_HostAddress}}/api/orders/test
+Accept: application/json
+
+###
+
+GET {{OrderService_HostAddress}}/api/orders/with-books
+Accept: application/json
+
+###
