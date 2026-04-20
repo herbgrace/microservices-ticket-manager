@@ -124,7 +124,7 @@ public class OrdersController(
                 OrderGuid = order.OrderGuid,
                 Name = username,
                 Email = useremail,
-                Message = $"Your AMAZING order {order.OrderGuid} was created successfully."
+                Message = $"Order placed: {order.OrderGuid}"
             };
 
             var messageServiceUrl = config["MessageServiceUrl"];

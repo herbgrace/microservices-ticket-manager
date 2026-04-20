@@ -54,3 +54,4 @@ build/
 /OrderService/obj
 
 /MessageService/node_modules
+/MessageService/.env
