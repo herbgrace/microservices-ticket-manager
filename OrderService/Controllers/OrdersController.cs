@@ -8,6 +8,8 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
+using RabbitMQ.Client;
+using System.Data;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -130,8 +132,11 @@ public class OrdersController(
             {
                 try
                 {
-                    var response = await _httpClient.PostAsJsonAsync(messageServiceUrl, notification);
-                    response.EnsureSuccessStatusCode();
+                    ConnectionFactory factory = new() { Uri = new Uri(messageServiceUrl) };
+                    var conn = await factory.CreateConnectionAsync();
+                    var channel = await conn.CreateChannelAsync();
+                    await channel.QueueDeclareAsync(queue: "orders", durable: true, exclusive: false, autoDelete: false);
+                    await channel.BasicPublishAsync(exchange: "", routingKey: "orders", body: Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(notification)));
                 }
                 catch (Exception ex)
                 {

@@ -23,7 +23,7 @@
 
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.4" />
 
-    <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="7.2.1" />
 
     <!--
       EUREKA / STEELTOE NOTE:
@@ -35,7 +35,7 @@
       Steeltoe 4.x package names changed slightly — check the migration guide before upgrading.
     -->
     <PackageReference Include="Steeltoe.Discovery.ClientCore" Version="3.2.8" />
-    <PackageReference Include="Steeltoe.Discovery.Eureka" Version="3.2.8" />
+    <PackageReference Include="Steeltoe.Discovery.Eureka" Version="4.0.0" />
   </ItemGroup>
 
 </Project>

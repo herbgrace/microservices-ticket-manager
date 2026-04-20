@@ -93,6 +93,8 @@ services:
       - RABBITMQ_DEFAULT_PASS=dev123
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - ticket-manager-network
   
   orders:
     build:
@@ -104,6 +106,7 @@ services:
       - user
       - catalog
       - ordersSQLDB
+      - rabbitMQ
     networks:
       - ticket-manager-network
 

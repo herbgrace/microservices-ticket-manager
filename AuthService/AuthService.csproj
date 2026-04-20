@@ -27,7 +27,7 @@
       compatibility, but is not officially supported. Upgrade to Steeltoe 4.x if needed: https://docs.steeltoe.io
     -->
     <PackageReference Include="Steeltoe.Discovery.ClientCore" Version="3.2.8" />
-    <PackageReference Include="Steeltoe.Discovery.Eureka" Version="3.2.8" />
+    <PackageReference Include="Steeltoe.Discovery.Eureka" Version="4.0.0" />
   </ItemGroup>
 
 </Project>
