@@ -96,6 +96,16 @@ services:
     networks:
       - ticket-manager-network
   
+  messageservice:
+    build:
+      context: ./MessageService
+    container_name: MessageService
+    depends_on:
+      - rabbitMQ
+    networks:
+      - ticket-manager-network
+    restart: on-failure
+  
   orders:
     build:
       context: ./OrderService

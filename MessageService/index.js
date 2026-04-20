@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 
 (async () => {
     const queue = 'orders';
-    const conn = await amqplib.connect('amqp://admin:dev123@localhost');
+    const conn = await amqplib.connect('amqp://admin:dev123@RabbitMQ');
 
     const channel = await conn.createChannel();
     await channel.assertQueue(queue, {
