@@ -61,7 +61,7 @@ builder.Services.AddAuthorization();
 // on .NET 10 via .NET Standard compatibility, but if you hit build or runtime errors,
 // upgrade to Steeltoe 4.x (targets .NET 8+). The 4.x AddDiscoveryClient() call is the same.
 // Steeltoe 4.x migration guide: https://docs.steeltoe.io
-//builder.Services.AddDiscoveryClient(builder.Configuration);
+builder.Services.AddEurekaDiscoveryClient();
 
 
 

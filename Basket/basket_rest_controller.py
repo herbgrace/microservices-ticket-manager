@@ -8,7 +8,7 @@ import os
 import redis
 import json
 import requests
-#import py_eureka_client.eureka_client as eureka_client
+import py_eureka_client.eureka_client as eureka_client
 from ticket import Ticket
 # from jose import JWTError, jwt
 
@@ -29,8 +29,6 @@ redis_client = redis.Redis(
     db=0,
     decode_responses=True
 )
-
-eureka_client = None
 
 # oauth_scheme = OAuth2PasswordBearer(tokenUrl="token")
 # SECRET_KEY = os.getenv("JWT_KEY", "fakeKey")

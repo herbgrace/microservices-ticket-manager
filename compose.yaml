@@ -33,6 +33,7 @@ services:
       - JWT_KEY=2YgFrs$3Z8k@bq!R7u%4Lm#N6y^P0t&W2YgFrs$3Z8k@bq!R7u%4Lm#N6y^P0t&W
     depends_on:
       - basketRedisDB
+      - rabbitMQ
     networks:
       - ticket-manager-network
 
@@ -101,7 +102,8 @@ services:
       context: ./MessageService
     container_name: MessageService
     depends_on:
-      - rabbitMQ
+      rabbitMQ:
+        condition: service_healthy
     networks:
       - ticket-manager-network
     restart: on-failure
@@ -132,6 +134,15 @@ services:
       - db-data:/var/lib/mysql
     networks:
       - ticket-manager-network
+
+  eureka:
+    image: steeltoeoss/eureka-server:latest
+    container_name: EurekaRegistry
+    ports:
+      - 8761:8761
+    networks:
+      - ticket-manager-network
+
 
 networks:
   ticket-manager-network:

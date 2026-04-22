@@ -26,7 +26,7 @@
       Steeltoe 3.x officially targets .NET 6/7/8. May still compile on .NET 10 via .NET Standard
       compatibility, but is not officially supported. Upgrade to Steeltoe 4.x if needed: https://docs.steeltoe.io
     -->
-    <PackageReference Include="Steeltoe.Discovery.ClientCore" Version="3.2.8" />
+    <PackageReference Include="Steeltoe.Discovery.Configuration" Version="4.0.0" />
     <PackageReference Include="Steeltoe.Discovery.Eureka" Version="4.0.0" />
   </ItemGroup>
 

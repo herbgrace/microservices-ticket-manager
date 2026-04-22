@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 
 (async () => {
     const queue = 'orders';
-    const conn = await amqplib.connect('amqp://admin:dev123@RabbitMQ');
+    const conn = await amqplib.connect(process.env.RABBITMQ_URI);
 
     const channel = await conn.createChannel();
     await channel.assertQueue(queue, {
@@ -25,11 +25,10 @@ const transporter = nodemailer.createTransport({
         }
     });
 
-    // Listener
     channel.consume(queue, async (msg) => {
         if (msg !== null) {
             const info = JSON.parse(msg.content.toString());
-            console.log(info);
+            // console.log(info);
             const response = await transporter.sendMail({
                 from: process.env.ETHEREAL_USERNAME,
                 to: info.Email,

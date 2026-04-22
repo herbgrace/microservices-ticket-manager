@@ -49,7 +49,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 //if you hit errors upgrade to Steeltoe 4.x: https://docs.steeltoe.io
-//builder.Services.AddDiscoveryClient(builder.Configuration);
+builder.Services.AddEurekaDiscoveryClient();
 
 var app = builder.Build();
 

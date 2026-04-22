@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Steeltoe.Discovery;
 using Steeltoe.Discovery.Eureka;
 
 using Scalar.AspNetCore;
@@ -41,11 +42,8 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 
-// Eureka / Steeltoe Service Discovery (currently disabled)
-// To re-enable: uncomment the line below.
-// NOTE: Steeltoe 3.2.8 officially targets .NET 6/7/8. May still work on .NET 10 via .NET Standard
-// compatibility, but if you hit errors upgrade to Steeltoe 4.x: https://docs.steeltoe.io
-// builder.Services.AddDiscoveryClient(builder.Configuration);
+// Eureka / Steeltoe Service Discovery
+builder.Services.AddEurekaDiscoveryClient();
 
 var app = builder.Build();
 
@@ -63,6 +61,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Required if Eureka is enabled (Steeltoe 3.x only — obsolete/removed in Steeltoe 4.x)
-//app.UseDiscoveryClient();
+// app.UseDiscoveryClient();
 
 app.Run();
