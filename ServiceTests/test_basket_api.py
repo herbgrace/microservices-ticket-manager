@@ -26,6 +26,7 @@ def test_basket_updates_items():
     new_id = "a5c9d4e2-1100-4480-ba87-6f2b3bb6d8c3"
 
     res = requests.put(f"{base_URI}/{added_GUIDS[0]}?new_id={new_id}",)
+    added_GUIDS[0] = new_id
     assert res.status_code == 200
 
 def test_basket_update_item_handles_bad_data():

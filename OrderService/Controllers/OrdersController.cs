@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Text;
 using RabbitMQ.Client;
 using System.Data;
+using System.Collections.Generic;
 
 [ApiController]
 [Route("api")]
@@ -103,7 +104,7 @@ public class OrdersController(
         try
         {
             var userGuidClaim = User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value;
-            if (string.IsNullOrEmpty(userGuidClaim))
+            if (string.IsNullOrEmpty(userGuidClaim) || !Guid.TryParse(userGuidClaim, out _))
             {
                 return Unauthorized();
             }
@@ -116,6 +117,37 @@ public class OrdersController(
             order.UserGuid = userguid;
             order.OrderGuid = Guid.NewGuid();
             order.CreatedDate = DateTime.UtcNow;
+            // get tickets from BasketService using the BasketGuid in the orderDTO
+            var basketServiceUrl = config["BasketServiceUrl"];
+            if (string.IsNullOrEmpty(basketServiceUrl))
+            {
+                logger.LogWarning("BasketService URL not configured — cannot fetch tickets for order.");
+                return StatusCode(503, "BasketService is unavailable.");
+            }
+            try
+            {
+                var response = await _httpClient.GetAsync($"{basketServiceUrl}/{orderDTO.BasketGuid}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    logger.LogWarning("Failed to fetch basket {BasketGuid} from BasketService — status code {StatusCode}.",
+                        orderDTO.BasketGuid, (int)response.StatusCode);
+                    return StatusCode(503, "Failed to retrieve basket details.");
+                }
+
+                var basketTickets = await response.Content.ReadFromJsonAsync<List<BasketTicket>>();
+                if (basketTickets == null)
+                {
+                    logger.LogError("BasketService returned success but response body was empty or malformed for BasketGuid {BasketGuid}.", orderDTO.BasketGuid);
+                    return StatusCode(500, "Unexpected response from BasketService.");
+                }
+
+                order.Tickets = basketTickets.Select(t => mapper.Map<Ticket>(t)).ToList();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error fetching basket {BasketGuid} from BasketService.", orderDTO.BasketGuid);
+                return StatusCode(503, "Failed to retrieve basket details.");
+            }
 
 
             db.Orders.Add(order);

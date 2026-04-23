@@ -4,6 +4,7 @@ import requests
 orders_base_URI = "http://localhost:5041/orders/api"
 users_base_URI = "http://localhost:5041/users/api"
 auth_base_URI = "http://localhost:5041/auth/api"
+basket_base_URI = "http://localhost:5041/baskets/api/pytest"
 created_user_GUIDS = []
 created_order_GUIDS = []
 created_JWTS = []
@@ -19,6 +20,8 @@ def test_orders_can_create_order():
         "password": "secure"
     }
 
+    id = "b0d8a7f4-a123-4c1f-b2ad-cf78867f9c52"
+
     # Create a user to store the tickets
     users_res = requests.post(f"{users_base_URI}", json=user)
     created_user_GUIDS.append(users_res.json()["userGuid"])
@@ -27,24 +30,12 @@ def test_orders_can_create_order():
     auth_res = requests.post(f"{auth_base_URI}/createtoken", json=user)
     created_JWTS.append(auth_res.text)
 
+    # Add a ticket to basket for testing
+    basket_res = requests.post(f"{basket_base_URI}", params={"ticket_id": id})
+
     obj = {
         "UserGuid": created_user_GUIDS[0],
-        "Tickets": [
-            {
-            "TicketGuid": "b0d8a7f4-a123-4c1f-b2ad-cf78867f9c52",
-            "Event": "Spring Fest Concert",
-            "Price": 59.99,
-            "Description": "Outdoor live concert featuring local bands.",
-            "EventDate": "2026-05-15"
-            },
-            {
-                "TicketGuid": "a5c9d4e2-1100-4480-ba87-6f2b3bb6d8c3",
-                "Event": "Cinema Night Premiere",
-                "Price": 12.5,
-                "Description": "Premiere screening with free popcorn.",
-                "EventDate": "2026-06-10"
-            }
-        ]
+        "BasketGuid": "pytest"
     }
     headers = {
         "Authorization": f"Bearer {created_JWTS[0]}",
@@ -57,8 +48,7 @@ def test_orders_can_create_order():
 
 def test_orders_create_order_handles_bad_data():
     obj = {
-        "UserGuid": "Fake Guid",
-        "Tickets": "Not Real Tickets"
+        "UserGuid": "Fake Guid"
     }
     headers = {
         "Authorization": f"Bearer {created_JWTS[0]}",

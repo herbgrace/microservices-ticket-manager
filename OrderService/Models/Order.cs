@@ -9,7 +9,7 @@ public class Order
     public Guid UserGuid { get; set; } // Soft reference to UserService — no FK constraint
 
     [Required]
-    public Guid BasketGuid { get; set; }
+    public string BasketGuid { get; set; }
     
     [Required]
     public DateTime CreatedDate { get; set; }
