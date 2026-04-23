@@ -108,6 +108,8 @@ services:
     build:
       context: ./MessageService
     container_name: MessageService
+    environment:
+      - RABBITMQ_URI=amqp://admin:dev123@rabbitMQ:5672
     depends_on:
       - rabbitMQ
       - eureka
