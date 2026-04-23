@@ -3,6 +3,7 @@ package com.listings.catalog;
 import java.util.UUID;
 import java.util.List;
 import java.util.NoSuchElementException;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/tickets")
+@RequestMapping("/api")
 public class TicketRestController {
     
     @Autowired
@@ -36,14 +37,14 @@ public class TicketRestController {
 
     @PostMapping(path="")
     @ResponseStatus(code=HttpStatus.CREATED)
-    public Ticket createTicket(@RequestBody Ticket ticket) {
+    public Ticket createTicket(@Valid @RequestBody Ticket ticket) {
         ticket.setId(UUID.randomUUID());
         return ticketRepository.save(ticket);
     }
 
     @PutMapping(path = "/{ticketGuid}")
     @ResponseStatus(HttpStatus.OK)
-    public Ticket updateTicket(@PathVariable(required = true) UUID ticketGuid, @RequestBody Ticket ticket) {
+    public Ticket updateTicket(@PathVariable(required = true) UUID ticketGuid, @Valid @RequestBody Ticket ticket) {
         Ticket existing = ticketRepository.findById(ticketGuid).orElseThrow(() -> new NoSuchElementException("Ticket not found"));
         ticket.setId(ticketGuid);
         existing = ticket;

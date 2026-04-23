@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api")]
 public class UsersController(
     ILogger<UsersController> logger,
     UserServiceDbContext db,
@@ -47,13 +47,16 @@ public class UsersController(
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] UserDTO userDTO)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         try
         {
             var existingUser = await db.Users.FirstOrDefaultAsync(u => u.Email == userDTO.Email);
             if (existingUser is not null)
-                return Ok(new
+                return BadRequest(new
                 {
-                    Success = true,
+                    Success = false,
                     Message = "User already exists.",
                     UserGuid = existingUser.UserGuid,
                     Email = existingUser.Email
@@ -82,6 +85,9 @@ public class UsersController(
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserDTO userDTO)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         try
         {
             var user = await db.Users.FirstOrDefaultAsync(u => u.Email == userDTO.Email);
@@ -111,6 +117,9 @@ public class UsersController(
     [Authorize]
     public async Task<IActionResult> Update(Guid userGuid, [FromBody] UserDTO userDTO)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         try
         {
             var user = await db.Users.FirstOrDefaultAsync(u => u.UserGuid == userGuid);

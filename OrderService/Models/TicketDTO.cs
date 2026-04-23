@@ -3,10 +3,19 @@ using System.ComponentModel.DataAnnotations;
 
 public class TicketDTO
 {    
-    public Guid TicketGuid { get; set; } 
-    public required string Event { get; set; }
-    public required string Description { get; set; }
+    [Required]
+    public Guid? TicketGuid { get; set; }
+
+    [Required]
+    public string? Event { get; set; }
+
+    [Required]
+    public string? Description { get; set; }
+
+    [Range(0.01, double.MaxValue)]
     public decimal Price { get; set; }      
+
+    [Required]
     public DateTime EventDate { get; set; }
 
 }

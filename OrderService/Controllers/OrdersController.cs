@@ -12,7 +12,7 @@ using RabbitMQ.Client;
 using System.Data;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api")]
 public class OrdersController(
     ILogger<OrdersController> logger,
     OrderServiceDbContext db,
@@ -97,6 +97,9 @@ public class OrdersController(
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] OrderDTO orderDTO)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         try
         {
             var userGuidClaim = User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value;

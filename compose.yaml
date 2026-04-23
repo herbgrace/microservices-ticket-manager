@@ -31,9 +31,16 @@ services:
       - "8082:8082"
     environment:
       - JWT_KEY=2YgFrs$3Z8k@bq!R7u%4Lm#N6y^P0t&W2YgFrs$3Z8k@bq!R7u%4Lm#N6y^P0t&W
+      - ENABLE_EUREKA=true
+      - EUREKA_SERVER=http://eureka:8761/eureka
+      - REDIS_HOST=basketRedisDB
+      - TICKET_SERVICE_URL=http://catalog:8080/api
+      - BASKET_SERVICE_IP=basket
     depends_on:
       - basketRedisDB
       - rabbitMQ
+      - eureka
+      - catalog
     networks:
       - ticket-manager-network
 
@@ -102,8 +109,8 @@ services:
       context: ./MessageService
     container_name: MessageService
     depends_on:
-      rabbitMQ:
-        condition: service_healthy
+      - rabbitMQ
+      - eureka
     networks:
       - ticket-manager-network
     restart: on-failure
@@ -140,6 +147,24 @@ services:
     container_name: EurekaRegistry
     ports:
       - 8761:8761
+    networks:
+      - ticket-manager-network
+
+  ocelot:
+    build:
+      context: ./Ocelot
+    container_name: Ocelot
+    ports:
+      - 5041:5041
+    environment:
+      - ASPNETCORE_URLS=http://*:5041
+    depends_on:
+    - eureka
+    - catalog
+    - basket
+    - user
+    - auth
+    - orders
     networks:
       - ticket-manager-network
 

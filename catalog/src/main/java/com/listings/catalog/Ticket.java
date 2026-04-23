@@ -2,6 +2,7 @@ package com.listings.catalog;
 
 import java.time.LocalDate;
 import java.util.UUID;
+import javax.validation.constraints.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,9 +10,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Ticket{
     @Id
     private UUID id;
+    
+    @NotBlank
     private String event;
+    
+    @DecimalMin(value = "0.0", inclusive = false)
     private double price;
+    
+    @NotBlank
     private String description;
+    
+    @NotNull
     private LocalDate eventDate;
 
     public Ticket(UUID id, String event, double price, String description, LocalDate eventDate) {

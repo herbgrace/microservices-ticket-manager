@@ -3,6 +3,11 @@ using System.ComponentModel.DataAnnotations;
 public class UserDTO
 {
     public string? Username { get; set; }
-    public String Email { get; set; }
-    public String Password { get; set; }    
+
+    [Required]
+    [EmailAddress]
+    public string? Email { get; set; }
+
+    [Required]
+    public string? Password { get; set; }
 }

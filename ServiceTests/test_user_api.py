@@ -1,8 +1,8 @@
 import pytest
 import requests
 
-base_URI = "http://localhost:8085/api/users"
-base_auth_URI = "http://localhost:8084/api/auth"
+base_URI = "http://localhost:5041/users/api"
+base_auth_URI = "http://localhost:5041/auth/api"
 created_GUIDS = []
 created_JWTS = []
 

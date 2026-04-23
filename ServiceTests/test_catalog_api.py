@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-base_URI = "http://localhost:8080/api/tickets"
+base_URI = "http://localhost:5041/catalog/api"
 added_GUIDS = []
 
 def test_catalog_adds_new_item():

@@ -1,8 +1,8 @@
 import pytest
 import requests
 
-users_base_URI = "http://localhost:8085/api/users"
-auth_base_URI = "http://localhost:8084/api/auth"
+users_base_URI = "http://localhost:5041/users/api"
+auth_base_URI = "http://localhost:5041/auth/api"
 created_GUIDS = []
 
 def test_auth_sign_of_life_returns_OK():
@@ -30,7 +30,7 @@ def test_auth_does_not_return_JWT_with_invalid_credentials():
     }
 
     res = requests.post(f"{auth_base_URI}/createtoken", json=obj)
-    assert res.status_code == 401
+    assert res.status_code == 400
 
 def test_auth_create_token_handles_bad_data():
     obj = {

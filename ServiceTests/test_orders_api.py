@@ -1,9 +1,9 @@
 import pytest
 import requests
 
-orders_base_URI = "http://localhost:8083/api/orders"
-users_base_URI = "http://localhost:8085/api/users"
-auth_base_URI = "http://localhost:8084/api/auth"
+orders_base_URI = "http://localhost:5041/orders/api"
+users_base_URI = "http://localhost:5041/users/api"
+auth_base_URI = "http://localhost:5041/auth/api"
 created_user_GUIDS = []
 created_order_GUIDS = []
 created_JWTS = []

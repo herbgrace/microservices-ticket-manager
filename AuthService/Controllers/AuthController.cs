@@ -8,7 +8,7 @@ using System.Text;
 internal record LoginResponse(Guid UserGuid, string Username, string Email);
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api")]
 public class AuthController(
     ILogger<AuthController> logger,
     IHttpClientFactory httpClientFactory,
@@ -19,9 +19,12 @@ public class AuthController(
 
     // Accepts email + password, calls UserService to verify credentials,
     // and returns a signed JWT on success.
-    [HttpPost("createtoken/")]
+    [HttpPost("createtoken")]
     public async Task<IActionResult> CreateTokenMethod1([FromBody] UserDTO userDto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var userServiceUrl = config["UserServiceUrl"]
             ?? throw new InvalidOperationException("UserServiceUrl is not configured.");
 
@@ -32,7 +35,7 @@ public class AuthController(
         HttpResponseMessage response;
         try
         {
-            response = await httpClient.PostAsJsonAsync($"{userServiceUrl}/api/users/login", userDto);
+            response = await httpClient.PostAsJsonAsync($"{userServiceUrl}/api/login", userDto);
         }
         catch (Exception ex)
         {
@@ -75,51 +78,5 @@ public class AuthController(
 
         logger.LogInformation("JWT issued for {Email}.", userDto.Email);
         return Ok(tokenString);
-    }
-
-    // Test endpoint: manually validates a Bearer token without relying on [Authorize].
-    // Useful for teaching how JWT validation works under the hood.
-    [HttpGet("testbasicauth")]
-    public IActionResult TestBasicAuth()
-    {
-        if (IsRequestAuthenticated(out _))
-            return Ok("YES - Authenticated!");
-
-        return Unauthorized("NO - NOT Authenticated");
-    }
-
-    private bool IsRequestAuthenticated(out ClaimsPrincipal? principal)
-    {
-        principal = null;
-
-        try
-        {
-            var authHeader = Request.Headers.Authorization.ToString();
-
-            if (string.IsNullOrWhiteSpace(authHeader) || !authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-                return false;
-
-            var token = authHeader["Bearer ".Length..].Trim();
-            var key = Encoding.UTF8.GetBytes(config["Jwt:Key"]!);
-
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = config["Jwt:Issuer"],
-                ValidAudience = config["Jwt:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ClockSkew = TimeSpan.Zero
-            };
-
-            principal = new JwtSecurityTokenHandler().ValidateToken(token, validationParameters, out _);
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
     }
 }

@@ -2,7 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 public class UserDTO
 {    
-    public String Username { get; set; }
-    public String Email { get; set; }    
-    public String Password { get; set; }    
+    public string? Username { get; set; }
+
+    [Required]
+    [EmailAddress]
+    public string? Email { get; set; }
+
+    [Required]
+    public string? Password { get; set; }
 }

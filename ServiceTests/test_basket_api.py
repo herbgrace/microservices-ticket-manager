@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-base_URI = "http://localhost:8082/api/basket/pytest"
+base_URI = "http://localhost:5041/basket/api/pytest"
 added_GUIDS = []
 
 def test_basket_adds_new_item():

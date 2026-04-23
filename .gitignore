@@ -55,3 +55,6 @@ build/
 
 /MessageService/node_modules
 /MessageService/.env
+
+/Ocelot/bin
+/Ocelot/obj

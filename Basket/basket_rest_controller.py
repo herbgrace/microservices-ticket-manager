@@ -13,11 +13,11 @@ from ticket import Ticket
 # from jose import JWTError, jwt
 
 load_dotenv()
-REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_HOST = os.getenv("REDIS_HOST", "basketRedisDB")
 REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
-TICKET_SERVICE_URL = os.getenv("TICKET_SERVICE_URL", "http://localhost:8080/api/tickets")
+TICKET_SERVICE_URL = os.getenv("TICKET_SERVICE_URL", "http://catalog:8080/api")
 
-EUREKA_SERVER = os.getenv("EUREKA_SERVER", "http://localhost:8761/eureka")
+EUREKA_SERVER = os.getenv("EUREKA_SERVER", "http://eureka:8761/eureka")
 SERVICE_NAME = os.getenv("SERVICE_NAME", "BasketServiceAPI")
 BASKET_SERVICE_PORT = int(os.getenv("BASKET_SERVICE_PORT", 8082))
 BASKET_SERVICE_IP = os.getenv("BASKET_SERVICE_IP", "127.0.0.1")
@@ -95,7 +95,7 @@ app.add_middleware(
 )
 
 
-@app.get("/api/basket/{user_id}", response_model=list[Ticket])
+@app.get("/api/{user_id}", response_model=list[Ticket])
 def get_basket(user_id: str):    
     key = get_user_basket_key(user_id)
     items = redis_client.hvals(key)
@@ -113,12 +113,12 @@ def get_basket(user_id: str):
     return basket
 
 
-@app.post("/api/basket/{user_id}", status_code=status.HTTP_201_CREATED)
+@app.post("/api/{user_id}", status_code=status.HTTP_201_CREATED)
 def add_to_basket(user_id: str, ticket: Ticket):    
     key = get_user_basket_key(user_id)
 
     if ticket.price <= 0:
-        raise HTTPException(status_code=400, detail="Ticket price must be greater than 0.")
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Ticket price must be greater than 0.")
 
     # Ensure unique ticketId
     if not ticket.id:
@@ -139,7 +139,7 @@ def add_to_basket(user_id: str, ticket: Ticket):
     return {"message": f"Ticket '{ticket.event}' added to basket."}
 
 
-@app.put("/api/basket/{user_id}/{ticket_uuid}")
+@app.put("/api/{user_id}/{ticket_uuid}")
 def update_basket_item(user_id: str, ticket_uuid: UUID, ticket: Ticket):    
     key = get_user_basket_key(user_id)
 
@@ -154,7 +154,7 @@ def update_basket_item(user_id: str, ticket_uuid: UUID, ticket: Ticket):
 
 
 
-@app.delete("/api/basket/{user_id}/{ticket_uuid}")
+@app.delete("/api/{user_id}/{ticket_uuid}")
 def remove_from_basket(user_id: str, ticket_uuid: UUID):  
     key = get_user_basket_key(user_id)
 
@@ -166,7 +166,7 @@ def remove_from_basket(user_id: str, ticket_uuid: UUID):
     return {"message": f"Ticket {ticket_uuid} removed from basket."}
 
 
-@app.delete("/api/basket/{user_id}")
+@app.delete("/api/{user_id}")
 def clear_basket(user_id: str):    
     key = get_user_basket_key(user_id)
     redis_client.delete(key)
