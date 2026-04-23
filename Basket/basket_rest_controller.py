@@ -20,7 +20,7 @@ TICKET_SERVICE_URL = os.getenv("TICKET_SERVICE_URL", "http://catalog:8080/api")
 EUREKA_SERVER = os.getenv("EUREKA_SERVER", "http://eureka:8761/eureka")
 SERVICE_NAME = os.getenv("SERVICE_NAME", "BasketServiceAPI")
 BASKET_SERVICE_PORT = int(os.getenv("BASKET_SERVICE_PORT", 8082))
-BASKET_SERVICE_IP = os.getenv("BASKET_SERVICE_IP", "127.0.0.1")
+BASKET_SERVICE_IP = os.getenv("BASKET_SERVICE_IP", "basket")
 ENABLE_EUREKA = os.getenv("ENABLE_EUREKA", "false").lower() == "true"
 
 redis_client = redis.Redis(
@@ -54,8 +54,8 @@ redis_client = redis.Redis(
 
 # router = APIRouter(dependencies=[Depends(get_current_user)])
 
-def get_user_basket_key(user_id: str) -> str:
-    return f"basket:{user_id}"
+def get_user_basket_key(basket_id: str) -> str:
+    return f"basket:{basket_id}"
 
 def fetch_ticket_details(ticket_id: UUID):
     try:
@@ -95,13 +95,13 @@ app.add_middleware(
 )
 
 
-@app.get("/api/{user_id}", response_model=list[Ticket])
-def get_basket(user_id: str):    
-    key = get_user_basket_key(user_id)
+@app.get("/api/{basket_id}", response_model=list[Ticket])
+def get_basket(basket_id: str):    
+    key = get_user_basket_key(basket_id)
     items = redis_client.hvals(key)
     basket = []
 
-    print(f"Fetching basket for user {user_id}: found {len(items)} item(s).")
+    print(f"Fetching basket for basket {basket_id}: found {len(items)} item(s).")
 
     for item in items:
         try:
@@ -113,50 +113,43 @@ def get_basket(user_id: str):
     return basket
 
 
-@app.post("/api/{user_id}", status_code=status.HTTP_201_CREATED)
-def add_to_basket(user_id: str, ticket: Ticket):    
-    key = get_user_basket_key(user_id)
+@app.post("/api/{basket_id}", status_code=status.HTTP_201_CREATED)
+def add_to_basket(basket_id: str, ticket_id: UUID):    
+    key = get_user_basket_key(basket_id)
 
-    if ticket.price <= 0:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Ticket price must be greater than 0.")
-
-    # Ensure unique ticketId
-    if not ticket.id:
-        ticket.id = uuid4()
-
-    # Optional: Validate ticket exists in catalog
-    # print(f"Ticket Details: {ticket}")
-    ticket_data = fetch_ticket_details(ticket.id)
-    # print(f"Fetched ticket details for ID {ticket.id}: {ticket_data}")
-    if not ticket_data:
+    ticket = fetch_ticket_details(ticket_id)
+    if not ticket:
         raise HTTPException(status_code=404, detail="Ticket not found in Catalog Service.")
 
+    if ticket["price"] <= 0:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Ticket price must be greater than 0.")
 
-    print(f"Adding ticket {ticket.id} with ID {ticket.id} to {key}")
+    print(f"Adding ticket {ticket['id']} with ID {ticket['id']} to {key}")
 
-    redis_client.hset(key, str(ticket.id), ticket.model_dump_json())
+    redis_client.hset(key, str(ticket['id']), json.dumps(ticket))
 
-    return {"message": f"Ticket '{ticket.event}' added to basket."}
+    return {"message": f"Ticket '{ticket['event']}' added to basket."}
 
 
-@app.put("/api/{user_id}/{ticket_uuid}")
-def update_basket_item(user_id: str, ticket_uuid: UUID, ticket: Ticket):    
-    key = get_user_basket_key(user_id)
+@app.put("/api/{basket_id}/{ticket_uuid}")
+def update_basket_item(basket_id: str, ticket_uuid: UUID, new_id: UUID):    
+    key = get_user_basket_key(basket_id)
 
     if not redis_client.hexists(key, str(ticket_uuid)):
         raise HTTPException(status_code=404, detail="Ticket not found in basket.")
 
     print(f"Updating ticket {ticket_uuid} in {key}")
+    new_ticket = fetch_ticket_details(new_id)
 
-    redis_client.hset(key, str(ticket_uuid), ticket.model_dump_json())
+    redis_client.hdel(key, str(ticket_uuid))
+    redis_client.hset(key, str(new_id), json.dumps(new_ticket))
 
-    return {"message": f"Ticket '{ticket.event}' updated in basket."}
+    return {"message": f"Ticket '{ticket_uuid}' updated to Ticket '{new_id}'."}
 
 
-
-@app.delete("/api/{user_id}/{ticket_uuid}")
-def remove_from_basket(user_id: str, ticket_uuid: UUID):  
-    key = get_user_basket_key(user_id)
+@app.delete("/api/{basket_id}/{ticket_uuid}")
+def remove_from_basket(basket_id: str, ticket_uuid: UUID):  
+    key = get_user_basket_key(basket_id)
 
     if redis_client.hdel(key, str(ticket_uuid)) == 0:
         raise HTTPException(status_code=404, detail="Ticket not found in basket.")
@@ -166,9 +159,9 @@ def remove_from_basket(user_id: str, ticket_uuid: UUID):
     return {"message": f"Ticket {ticket_uuid} removed from basket."}
 
 
-@app.delete("/api/{user_id}")
-def clear_basket(user_id: str):    
-    key = get_user_basket_key(user_id)
+@app.delete("/api/{basket_id}")
+def clear_basket(basket_id: str):    
+    key = get_user_basket_key(basket_id)
     redis_client.delete(key)
     print(f"Cleared basket for {key}")
     return {"message": "Basket cleared."}
